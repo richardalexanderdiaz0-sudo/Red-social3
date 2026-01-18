@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Red Social{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>Bienvenido a Red Social</h1>
+        <p>Conecta con personas, comparte tus momentos y descubre nuevas experiencias</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Crear Cuenta</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Iniciar Sesión</a>
+        </div>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>📝 Publica</h3>
+        <p>Comparte tus pensamientos, fotos y momentos especiales con la comunidad</p>
+    </div>
+    <div class="feature-card">
+        <h3>👥 Conecta</h3>
+        <p>Sigue a tus amigos y descubre nuevas personas con intereses similares</p>
+    </div>
+    <div class="feature-card">
+        <h3>💬 Interactúa</h3>
+        <p>Comenta, da likes y mantén conversaciones significativas</p>
+    </div>
+</div>
+{% endblock %}
+

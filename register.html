@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse - Red Social{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Crear Cuenta</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", placeholder="Nombre de usuario") }}
+                {% if form.username.errors %}
+                    <span class="error">{{ form.username.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", type="email", placeholder="tu@email.com") }}
+                {% if form.email.errors %}
+                    <span class="error">{{ form.email.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.nombre.label(class="form-label") }}
+                {{ form.nombre(class="form-control", placeholder="Nombre completo (opcional)") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Contraseña") }}
+                {% if form.password.errors %}
+                    <span class="error">{{ form.password.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.confirmar_password.label(class="form-label") }}
+                {{ form.confirmar_password(class="form-control", placeholder="Confirmar contraseña") }}
+                {% if form.confirmar_password.errors %}
+                    <span class="error">{{ form.confirmar_password.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="btn btn-primary btn-block") }}
+        </form>
+        <p class="auth-link">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a></p>
+    </div>
+</div>
+{% endblock %}
+

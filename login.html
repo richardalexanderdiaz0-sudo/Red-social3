@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - Red Social{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Iniciar Sesión</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", placeholder="Nombre de usuario") }}
+                {% if form.username.errors %}
+                    <span class="error">{{ form.username.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Contraseña") }}
+                {% if form.password.errors %}
+                    <span class="error">{{ form.password.errors[0] }}</span>
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="btn btn-primary btn-block") }}
+        </form>
+        <p class="auth-link">¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Sin conexión - Red Social{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1>📴 Sin Conexión</h1>
+    <p>No tienes conexión a internet en este momento.</p>
+    <p>Algunas funciones pueden no estar disponibles sin conexión.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Volver al Inicio</a>
+</div>
+{% endblock %}
+
