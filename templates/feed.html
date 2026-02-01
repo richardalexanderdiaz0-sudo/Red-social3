@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Feed - Red Social{% endblock %}
+
+{% block content %}
+<div class="feed-container">
+    <div class="feed-left">
+        <div class="create-post-card">
+            <h3>Crear Publicación</h3>
+            <form method="POST" action="{{ url_for('crear_post') }}" enctype="multipart/form-data">
+                {{ post_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ post_form.contenido(class="form-control textarea", rows="4", placeholder="¿Qué estás pensando?") }}
+                </div>
+                <div class="form-group">
+                    {{ post_form.imagen(class="form-control", accept="image/*") }}
+                </div>
+                {{ post_form.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
+
+    <div class="feed-center">
+        <h2>Tu Feed</h2>
+        <div class="posts-container">
+            {% for post in posts %}
+            <div class="post-card" data-post-id="{{ post.id }}">
+                <div class="post-header">
+                    <div class="post-author">
+                        <img src="{{ url_for('static', filename='uploads/' + post.usuario.avatar) if post.usuario.avatar else url_for('static', filename='uploads/default_avatar.png') }}" 
+                             alt="{{ post.usuario.username }}" class="avatar-small">
+                        <div>
+                            <a href="{{ url_for('perfil', username=post.usuario.username) }}" class="post-author-name">
+                                {{ post.usuario.nombre or post.usuario.username }}
+                            </a>
+                            <span class="post-date">{{ post.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="post-content">
+                    <p>{{ post.contenido }}</p>
+                    {% if post.imagen %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.imagen) }}" alt="Post image" class="post-image">
+                    {% endif %}
+                </div>
+                
+                <div class="post-actions">
+                    <button class="btn-like" data-post-id="{{ post.id }}">
+                        <span class="like-icon">❤️</span>
+                        <span class="like-count">{{ post.cantidad_likes() }}</span>
+                    </button>
+                    <span class="comment-count">💬 {{ post.cantidad_comentarios() }} comentarios</span>
+                </div>
+                
+                <div class="post-comments">
+                    {% for comentario in post.comentarios[:5] %}
+                    <div class="comment">
+                        <strong>{{ comentario.usuario.nombre or comentario.usuario.username }}</strong>
+                        <span>{{ comentario.contenido }}</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <form class="comment-form" data-post-id="{{ post.id }}">
+                        {{ comentario_form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ comentario_form.contenido(class="form-control", placeholder="Escribe un comentario...", rows="2") }}
+                        </div>
+                        <button type="submit" class="btn btn-small">Comentar</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-feed">
+                <p>No hay publicaciones aún. ¡Sé el primero en publicar!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="feed-right">
+        <div class="sidebar-card">
+            <h3>Sugerencias</h3>
+            <a href="{{ url_for('usuarios') }}" class="btn btn-secondary">Descubrir Usuarios</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sistema de likes
+    document.querySelectorAll('.btn-like').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likeCount = this.querySelector('.like-count');
+                likeCount.textContent = data.cantidad_likes;
+                this.classList.toggle('liked', data.accion === 'liked');
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Sistema de comentarios
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const postId = this.dataset.postId;
+            const contenido = this.querySelector('textarea').value;
+            const csrfToken = this.querySelector('input[name="csrf_token"]').value;
+            
+            const formData = new FormData();
+            formData.append('contenido', contenido);
+            formData.append('csrf_token', csrfToken);
+            
+            fetch(`/post/${postId}/comentario`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(() => location.reload())
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+{% endblock %}

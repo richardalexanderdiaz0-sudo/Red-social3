@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ usuario.username }} - Perfil{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="{{ url_for('static', filename='uploads/' + usuario.avatar) if usuario.avatar else url_for('static', filename='uploads/default_avatar.png') }}" 
+             alt="{{ usuario.username }}" class="profile-avatar">
+        <div class="profile-info">
+            <h1>{{ usuario.nombre or usuario.username }}</h1>
+            <p class="profile-username">@{{ usuario.username }}</p>
+            {% if usuario.biografia %}
+            <p class="profile-bio">{{ usuario.biografia }}</p>
+            {% endif %}
+            <div class="profile-stats">
+                <span><strong>{{ posts|length }}</strong> publicaciones</span>
+                <span><strong>{{ cantidad_seguidores }}</strong> seguidores</span>
+                <span><strong>{{ cantidad_seguidos }}</strong> siguiendo</span>
+            </div>
+            {% if current_user.id != usuario.id %}
+            <button class="btn btn-primary" id="follow-btn" data-username="{{ usuario.username }}">
+                {% if es_seguido %}Dejar de seguir{% else %}Seguir{% endif %}
+            </button>
+            {% else %}
+            <a href="{{ url_for('editar_perfil') }}" class="btn btn-secondary">Editar Perfil</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="profile-posts">
+        <h2>Publicaciones</h2>
+        <div class="posts-grid">
+            {% for post in posts %}
+            <div class="post-thumbnail">
+                {% if post.imagen %}
+                <img src="{{ url_for('static', filename='uploads/' + post.imagen) }}" alt="Post">
+                {% else %}
+                <div class="post-text-preview">{{ post.contenido[:100] }}...</div>
+                {% endif %}
+                <div class="post-overlay">
+                    <span>❤️ {{ post.cantidad_likes() }}</span>
+                    <span>💬 {{ post.cantidad_comentarios() }}</span>
+                </div>
+            </div>
+            {% else %}
+            <p class="empty-state">Este usuario aún no ha publicado nada.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if current_user.id != usuario.id %}
+<script>
+document.getElementById('follow-btn').addEventListener('click', function() {
+    const username = this.dataset.username;
+    fetch(`/usuario/${username}/seguir`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        this.textContent = data.accion === 'followed' ? 'Dejar de seguir' : 'Seguir';
+        location.reload();
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
+{% endif %}
+{% endblock %}

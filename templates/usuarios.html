@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar Usuarios{% endblock %}
+
+{% block content %}
+<div class="usuarios-container">
+    <div class="search-container">
+        <h2>Descubrir Usuarios</h2>
+        <form method="GET" action="{{ url_for('usuarios') }}" class="search-form">
+            <input type="text" name="q" value="{{ query }}" placeholder="Buscar por nombre o usuario..." class="search-input">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <div class="usuarios-grid">
+        {% if usuarios %}
+            {% for usuario in usuarios %}
+            <div class="usuario-card">
+                <img src="{{ url_for('static', filename='uploads/' + usuario.avatar) if usuario.avatar else url_for('static', filename='uploads/default_avatar.png') }}" 
+                     alt="{{ usuario.username }}" class="usuario-avatar">
+                <h3>{{ usuario.nombre or usuario.username }}</h3>
+                <p class="usuario-username">@{{ usuario.username }}</p>
+                {% if usuario.biografia %}
+                <p class="usuario-bio">{{ usuario.biografia[:100] }}{% if usuario.biografia|length > 100 %}...{% endif %}</p>
+                {% endif %}
+                <a href="{{ url_for('perfil', username=usuario.username) }}" class="btn btn-secondary">Ver Perfil</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state" style="grid-column: 1 / -1; text-align: center;">
+                <p>{% if query %}No se encontraron usuarios con "{{ query }}"{% else %}Busca usuarios para empezar a seguir{% endif %}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

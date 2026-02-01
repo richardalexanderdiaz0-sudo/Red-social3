@@ -1,0 +1,29 @@
+{
+  "name": "Red Social",
+  "short_name": "Red Social",
+  "description": "Una red social completa para conectar con personas, compartir momentos e interactuar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/uploads/default_avatar.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/uploads/default_avatar.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "lifestyle"],
+  "lang": "es",
+  "dir": "ltr",
+  "screenshots": []
+}
